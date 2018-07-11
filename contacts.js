@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('myContacts.contacts', ['ngRoute', 'firebase'])
+angular.module('myContacts.contacts', ['ngRoute','firebase'])
 
 .config(['$routeProvider', function($routeProvider) {
   $routeProvider.when('/contacts', {
@@ -9,11 +9,14 @@ angular.module('myContacts.contacts', ['ngRoute', 'firebase'])
   });
 }])
 
+// Contacts Controller
 .controller('ContactsCtrl', ['$scope', '$firebaseArray', function($scope, $firebaseArray) {
-  var ref = firebase.database().ref();
-  // download the data into a local object
-  $scope.contacts = $firebaseArray(ref);
-  // putting a console.log here won't work, see below
+	// Init Firebase
+	var ref = new Firebase('https://mycontacts-app.firebaseio.com/contacts');
+
+	// get Contacts
+	$scope.contacts = $firebaseArray(ref);
+	//console.log($scope.contacts);
 
 	// Show Add Form
 	$scope.showAddForm = function(){
@@ -62,7 +65,7 @@ angular.module('myContacts.contacts', ['ngRoute', 'firebase'])
 				}
 			]
 		}).then(function(ref){
-			var id = ref.key;
+			var id = ref.key();
 			console.log('Added Contact with ID: '+id);
 
 			// Clear Form

@@ -11,31 +11,37 @@ angular.module('myContacts.contacts', ['ngRoute', 'firebase'])
 
 .controller('ContactsCtrl', ['$scope', '$firebaseArray', function($scope, $firebaseArray) {
   var ref = firebase.database().ref();
-  // download the data into a local object
-  $scope.contacts = $firebaseArray(ref);
-  // putting a console.log here won't work, see below
+
+	// get Contacts
+	$scope.contacts = $firebaseArray(ref);
 
 	// Show Add Form
 	$scope.showAddForm = function(){
 		$scope.addFormShow = true;
 	}
 
-	// // Show Edit Form
-	// $scope.showEditForm = function(contact){
-	// 	$scope.editFormShow = true;
-  //
-	// 	$scope.id			    = contact.$id;
-	// 	$scope.name 			= contact.name;
-	// 	$scope.email 			= contact.email;
-	// 	$scope.company 			= contact.company;
-	// 	$scope.work_phone 		= contact.phones[0].work;
-	// 	$scope.home_phone 		= contact.phones[0].home;
-	// 	$scope.mobile_phone 	= contact.phones[0].mobile;
-	// 	$scope.street_address 	= contact.address[0].street_address;
-	// 	$scope.city 			= contact.address[0].city;
-	// 	$scope.state 			= contact.address[0].state;
-	// 	$scope.zipcode 			= contact.address[0].zipcode;
-	// }
+	// Show Edit Form
+	$scope.showEditForm = function(contact){
+		$scope.editFormShow = true;
+
+		$scope.id			    = contact.$id;
+		$scope.name 			= contact.name;
+		$scope.email 			= contact.email;
+		$scope.company 			= contact.company;
+		$scope.work_phone 		= contact.phones[0].work;
+		$scope.home_phone 		= contact.phones[0].home;
+		$scope.mobile_phone 	= contact.phones[0].mobile;
+		$scope.street_address 	= contact.address[0].street_address;
+		$scope.city 			= contact.address[0].city;
+		$scope.state 			= contact.address[0].state;
+		$scope.zipcode 			= contact.address[0].zipcode;
+	}
+
+	// Hide Forms
+	$scope.hide = function(){
+		$scope.addFormShow = false;
+		$scope.contactShow = false;
+	}
 
 	// Submit Contact
 	$scope.addFormSubmit = function(){
@@ -98,7 +104,7 @@ angular.module('myContacts.contacts', ['ngRoute', 'firebase'])
 		// Get Record
 		var record = $scope.contacts.$getRecord(id);
 
-		// Assign Values
+		// Assign Values ! will return error if field is blank
 		record.name 						= $scope.name;
 		record.email 						= $scope.email;
 		record.company 						= $scope.company;
@@ -112,15 +118,18 @@ angular.module('myContacts.contacts', ['ngRoute', 'firebase'])
 
 		// Save Conrtact
 		$scope.contacts.$save(record).then(function(ref){
-			console.log(ref.key);
-		});
+			console.log(ref.key + ' Uploaded to database...');
+		})
+    .catch(function(error) {
+      console.log("Error:", error);
+    });
 
-		clearFields();
+    clearFields();
 
-		// Hide Form
-		$scope.editFormShow = false;
+    // Hide Form
+    $scope.editFormShow = false;
 
-		$scope.msg = "Contact Updated";
+    $scope.msg = "Contact Updated";
 	}
 
 	$scope.showContact = function(contact){
@@ -140,19 +149,14 @@ angular.module('myContacts.contacts', ['ngRoute', 'firebase'])
 		$scope.contactShow = true;
 	}
 
-	// $scope.removeContact = function(contact){
-	// 	console.log('Removing Contact');
-  //
-	// 	$scope.contacts.$remove(contact);
-  //
-	// 	$scope.msg="Contact Removed";
-	// }
-  //
-	// // Hide Forms
-	// $scope.hide = function(){
-	// 	$scope.addFormShow = false;
-	// 	$scope.contactShow = false;
-	// }
+
+	$scope.removeContact = function(contact){
+		console.log('Removing Contact');
+
+		$scope.contacts.$remove(contact);
+
+		$scope.msg="Contact Removed";
+	}
 
 	// Clear $scope Fields
 	function clearFields(){
